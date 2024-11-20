@@ -9,24 +9,51 @@ class FileUploader {
         // Configuración predeterminada
         this.options = Object.assign(
             {
-                allowedFileTypes: ['jpg', 'png', 'pdf'], // Tipos de archivo permitidos
-                maxFileSize: 2048, // Tamaño máximo del archivo (KB)
-                maxFiles: 5, // Número máximo de archivos
-                autoUpload: false, // Subida automática al seleccionar
-                uploadUrl: 'upload.php', // URL para subir archivos
-                deleteButtonText: '<i class="fas fa-trash"></i> Eliminar', // Botón de eliminar (editable)
-                showDetails: ['name', 'size', 'type'], // Detalles a mostrar
-                thumbnails: true, // Mostrar thumbnails para imágenes
-                iconMap: { // Mapear tipos de archivo a iconos
+                language: 'es', // Idioma predeterminado
+                translations: {
+                    es: {
+                        dragDropText: 'Arrastra y suelta los archivos aquí, o',
+                        chooseFile: 'elige un archivo',
+                        uploadButton: 'Subir Archivos',
+                        deleteButton: '<i class="fas fa-trash"></i> Eliminar',
+                        maxFilesError: 'Solo puedes subir un máximo de {maxFiles} archivos.',
+                        fileSizeError: 'El archivo {fileName} excede el tamaño máximo de {maxFileSize} KB.',
+                        fileTypeError: 'Tipo de archivo no permitido: {fileType}.',
+                        successMessage: '¡Archivo {fileName} subido con éxito!',
+                        errorMessage: 'Error al subir el archivo {fileName}.',
+                        noFilesSelected: 'No se han seleccionado archivos.',
+                    },
+                    en: {
+                        dragDropText: 'Drag and drop files here, or',
+                        chooseFile: 'choose a file',
+                        uploadButton: 'Upload Files',
+                        deleteButton: '<i class="fas fa-trash"></i> Delete',
+                        maxFilesError: 'You can upload a maximum of {maxFiles} files.',
+                        fileSizeError: 'File {fileName} exceeds the maximum size of {maxFileSize} KB.',
+                        fileTypeError: 'File type not allowed: {fileType}.',
+                        successMessage: 'File {fileName} uploaded successfully!',
+                        errorMessage: 'Error uploading file {fileName}.',
+                        noFilesSelected: 'No files selected.',
+                    },
+                },
+                allowedFileTypes: ['jpg', 'png', 'pdf'],
+                maxFileSize: 2048,
+                maxFiles: 5,
+                autoUpload: false,
+                uploadUrl: 'upload.php',
+                deleteButtonText: '<i class="fas fa-trash"></i> Eliminar',
+                showDetails: ['name', 'size', 'type'],
+                thumbnails: true,
+                iconMap: {
                     pdf: 'fas fa-file-pdf',
                     docx: 'fas fa-file-word',
                     xlsx: 'fas fa-file-excel',
                     default: 'fas fa-file-alt',
                 },
-                onSuccess: () => {}, // Callback al subir un archivo correctamente
-                onError: () => {}, // Callback al ocurrir un error
-                onProgress: () => {}, // Callback para progreso
-                onDelete: () => {}, // Callback al eliminar un archivo
+                onSuccess: () => {},
+                onError: () => {},
+                onProgress: () => {},
+                onDelete: () => {},
             },
             options
         );
@@ -36,7 +63,6 @@ class FileUploader {
     }
 
     init() {
-        // Renderiza la interfaz del uploader
         this.renderUploader();
         this.addEventListeners();
     }
@@ -44,15 +70,17 @@ class FileUploader {
     renderUploader() {
         this.container.innerHTML = `
             <div class="upload-container">
-                <p><i class="fas fa-cloud-upload-alt"></i> Arrastra y suelta los archivos aquí, o 
+                <p><i class="fas fa-cloud-upload-alt"></i> ${this.getTranslation('dragDropText')}
                     <label for="file-upload" class="text-primary">
-                        <i class="fas fa-folder-open"></i> elige un archivo
+                        <i class="fas fa-folder-open"></i> ${this.getTranslation('chooseFile')}
                     </label>
                 </p>
                 <input type="file" id="file-upload" multiple accept="${this.options.allowedFileTypes
                     .map((type) => `.${type}`)
                     .join(',')}">
-                <button id="upload-button" class="btn btn-primary" style="display: none;"><i class="fas fa-upload"></i> Subir Archivos</button>
+                <button id="upload-button" class="btn btn-primary" style="display: none;">
+                    <i class="fas fa-upload"></i> ${this.getTranslation('uploadButton')}
+                </button>
                 <div class="progress mt-3" id="progress-bar" style="display: none;">
                     <div class="progress-bar progress-bar-fill" id="progress-bar-fill" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
@@ -94,18 +122,18 @@ class FileUploader {
         const fileInfo = this.container.querySelector('#file-info');
 
         if (this.filesToUpload.length + newFiles.length > this.options.maxFiles) {
-            toastr.error(`Solo puedes subir un máximo de ${this.options.maxFiles} archivos.`);
+            toastr.error(this.getTranslation('maxFilesError', { maxFiles: this.options.maxFiles }));
             return;
         }
 
         newFiles.forEach((file) => {
             const fileType = file.name.split('.').pop().toLowerCase();
             if (!this.options.allowedFileTypes.includes(fileType)) {
-                toastr.error(`Tipo de archivo no permitido: ${fileType}`);
+                toastr.error(this.getTranslation('fileTypeError', { fileType }));
                 return;
             }
             if (file.size / 1024 > this.options.maxFileSize) {
-                toastr.error(`El archivo ${file.name} excede el tamaño máximo de ${this.options.maxFileSize} KB.`);
+                toastr.error(this.getTranslation('fileSizeError', { fileName: file.name, maxFileSize: this.options.maxFileSize }));
                 return;
             }
             this.filesToUpload.push(file);
@@ -164,14 +192,13 @@ class FileUploader {
                 detailsContainer.appendChild(detailElement);
             });
 
-            // Botón de eliminar
             const deleteButton = document.createElement('button');
             deleteButton.classList.add('delete-file');
-            deleteButton.innerHTML = this.options.deleteButtonText;
+            deleteButton.innerHTML = this.getTranslation('deleteButton');
             deleteButton.addEventListener('click', () => {
                 this.filesToUpload.splice(index, 1);
                 this.displayFileInfo(fileInfo);
-                this.options.onDelete(file); // Callback al eliminar
+                this.options.onDelete(file);
             });
 
             filePreview.append(detailsContainer, deleteButton);
@@ -181,7 +208,7 @@ class FileUploader {
 
     uploadFiles() {
         if (this.filesToUpload.length === 0) {
-            toastr.error('No se han seleccionado archivos.');
+            toastr.error(this.getTranslation('noFilesSelected'));
             return;
         }
 
@@ -205,10 +232,10 @@ class FileUploader {
 
             xhr.addEventListener('load', () => {
                 if (xhr.status === 200) {
-                    toastr.success(`¡Archivo ${file.name} subido con éxito!`);
+                    toastr.success(this.getTranslation('successMessage', { fileName: file.name }));
                     this.options.onSuccess(file);
                 } else {
-                    toastr.error(`Error al subir el archivo ${file.name}.`);
+                    toastr.error(this.getTranslation('errorMessage', { fileName: file.name }));
                     this.options.onError(file);
                 }
                 if (index === this.filesToUpload.length - 1) {
@@ -222,6 +249,18 @@ class FileUploader {
             xhr.send(formData);
         });
     }
+
+    getTranslation(key, placeholders = {}) {
+        const translation = this.options.translations[this.options.language][key] || key;
+        return translation.replace(/{(\w+)}/g, (_, placeholder) => placeholders[placeholder] || '');
+    }
+    
+    addLanguage(languageCode, translations) {
+        if (this.options.translations[languageCode]) {
+            console.warn(`El idioma '${languageCode}' ya existe. Las traducciones serán actualizadas.`);
+        }
+        this.options.translations[languageCode] = translations;
+    }    
 }
 
 export default FileUploader;
