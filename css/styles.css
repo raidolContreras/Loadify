@@ -1,0 +1,231 @@
+
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 2rem;
+    background-color: #f0f2f5;
+    color: #333;
+}
+p {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+.upload-container {
+    border: 1px dashed #007bff;
+    padding: 3rem;
+    text-align: center;
+    margin: 2rem auto;
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 15px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+}
+.upload-container.dragover {
+    background-color: #e6f7ff;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+}
+input[type="file"] {
+    display: none;
+}
+label {
+    cursor: pointer;
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+label:hover {
+    color: #0056b3;
+}
+.btn-primary {
+    margin-top: 1.5rem;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+.progress-bar-container {
+    margin-top: 1rem;
+}
+.file-info {
+    margin-top: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}
+.delete-file {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espaciado entre icono y texto */
+    cursor: pointer;
+    border-radius: 25px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.delete-file:hover {
+    background-color: #b21f2d;
+    box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.delete-file:focus {
+    outline: 2px solid #ffc107; /* Indicador de foco */
+    outline-offset: 2px;
+}
+
+.delete-file i {
+    margin: 0; /* Asegura que el icono no tenga márgenes adicionales */
+    font-size: 0.5rem; /* Tamaño del icono */
+}
+.file-details {
+    line-height: 1.5;
+    text-align: left;
+}
+.admin-settings {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+#upload-button, #progress-bar {
+    display: none;
+}
+.progress-bar {
+    transition: width 0.4s ease;
+}
+.file-preview {
+    width: 180px;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.file-preview:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.file-preview img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.file-icon {
+    font-size: 48px; /* Aumentar tamaño del icono */
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.file-preview span {
+    font-weight: bold;
+    font-size: 14px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.file-details div {
+    font-size: 12px;
+    color: #6c757d;
+}
+.file-preview {
+    width: 180px;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 10px;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    max-height: 250px; /* Limita el alto máximo del cuadro */
+}
+
+.file-preview:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.file-preview img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.file-icon {
+    font-size: 48px; /* Tamaño del icono más grande */
+    color: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    width: 100%;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    background: #f8f9fa;
+}
+
+.file-preview span {
+    font-weight: bold;
+    font-size: 14px;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.file-details {
+    font-size: 12px;
+    color: #6c757d;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    max-height: 80px; /* Limita el alto máximo de los detalles */
+    overflow: hidden;
+    width: 100%; /* Asegura que ocupe todo el ancho */
+    text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.file-details div {
+    word-break: break-word; /* Rompe las palabras largas */
+    margin-bottom: 5px;
+}
