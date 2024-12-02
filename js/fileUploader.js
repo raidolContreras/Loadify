@@ -36,6 +36,7 @@ class FileUploader {
                         noFilesSelected: 'No files selected.',
                     },
                 },
+
                 fileFieldName: 'file', // Nombre predeterminado del campo de archivo
                 additionalData: {},   // Datos adicionales
                 allowedFileTypes: ['jpg', 'png', 'pdf'],
@@ -128,8 +129,14 @@ class FileUploader {
             toastr.error(this.getTranslation('maxFilesError', { maxFiles: this.options.maxFiles }));
             return;
         }
-    
+        
         newFiles.forEach((file) => {
+            
+            if (this.filesToUpload.some((existingFile) => existingFile.name === file.name)) {
+                toastr.warning(`El archivo ${file.name} ya fue seleccionado.`);
+                return;
+            }
+            
             const fileType = file.name.split('.').pop().toLowerCase();
             if (!this.options.allowedFileTypes.includes(fileType)) {
                 toastr.error(this.getTranslation('fileTypeError', { fileType }));
@@ -167,7 +174,13 @@ class FileUploader {
             filePreview.classList.add('file-preview');
             filePreview.setAttribute('data-index', index);
 
-            if (this.options.thumbnails && file.type.startsWith('image/')) {
+            if (file.type === 'application/pdf') {
+                const iframe = document.createElement('iframe');
+                iframe.src = URL.createObjectURL(file);
+                iframe.style.width = '100%';
+                iframe.style.height = '100px';
+                filePreview.appendChild(iframe);
+            } else if (this.options.thumbnails && file.type.startsWith('image/')) {
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
                 img.alt = file.name;
@@ -225,7 +238,6 @@ class FileUploader {
         }
     }
     
-
     uploadFiles() {
         if (this.filesToUpload.length === 0) {
             toastr.error(this.getTranslation('noFilesSelected'));
@@ -290,7 +302,8 @@ class FileUploader {
             console.warn(`El idioma '${languageCode}' ya existe. Las traducciones serán actualizadas.`);
         }
         this.options.translations[languageCode] = translations;
-    }    
+    }
+    
 }
 
 export default FileUploader;
