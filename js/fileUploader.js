@@ -36,6 +36,8 @@ class FileUploader {
                         noFilesSelected: 'No files selected.',
                     },
                 },
+                fileFieldName: 'file', // Nombre predeterminado del campo de archivo
+                additionalData: {},   // Datos adicionales
                 allowedFileTypes: ['jpg', 'png', 'pdf'],
                 maxFileSize: 2048,
                 maxFiles: 5,
@@ -70,7 +72,8 @@ class FileUploader {
     renderUploader() {
         this.container.innerHTML = `
             <div class="upload-container">
-                <p><i class="fas fa-cloud-upload-alt"></i> ${this.getTranslation('dragDropText')}
+                <p>
+                    <i class="fas fa-cloud-upload-alt"></i> ${this.getTranslation('dragDropText')}
                     <label for="file-upload" class="text-primary">
                         <i class="fas fa-folder-open"></i> ${this.getTranslation('chooseFile')}
                     </label>
@@ -245,7 +248,17 @@ class FileUploader {
             });
 
             const formData = new FormData();
-            formData.append('file', file);
+
+            // Usa el nombre dinámico del campo
+            const fieldName = this.options.fileFieldName || 'file';
+            formData.append(fieldName, file);
+
+            for (const key in this.options.additionalData) {
+                if (this.options.additionalData.hasOwnProperty(key)) {
+                    formData.append(key, this.options.additionalData[key]);
+                }
+            }
+            
             xhr.send(formData);
         });
     }
