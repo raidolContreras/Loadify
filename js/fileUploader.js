@@ -96,31 +96,42 @@ class FileUploader {
     addEventListeners() {
         const fileInput = this.container.querySelector('#file-upload');
         const uploadContainer = this.container.querySelector('.upload-container');
+        const label = this.container.querySelector('label[for="file-upload"]');
         const uploadButton = this.container.querySelector('#upload-button');
-
+    
         uploadContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
             uploadContainer.classList.add('dragover');
         });
-
+    
         uploadContainer.addEventListener('dragleave', () => {
             uploadContainer.classList.remove('dragover');
         });
-
+    
         uploadContainer.addEventListener('drop', (event) => {
             event.preventDefault();
             uploadContainer.classList.remove('dragover');
             const newFiles = Array.from(event.dataTransfer.files);
             this.handleFileSelection(newFiles);
         });
-
+    
+        // Detener la propagación del clic en el label
+        label.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+    
+        // Nuevo evento para hacer clic en todo el contenedor
+        uploadContainer.addEventListener('click', () => {
+            fileInput.click(); // Dispara el evento de clic del input oculto
+        });
+    
         fileInput.addEventListener('change', (event) => {
             const newFiles = Array.from(event.target.files);
             this.handleFileSelection(newFiles);
         });
-
+    
         uploadButton.addEventListener('click', () => this.uploadFiles());
-    }
+    }       
 
     handleFileSelection(newFiles) {
         const fileInfo = this.container.querySelector('#file-info');
@@ -306,4 +317,6 @@ class FileUploader {
     
 }
 
+
 export default FileUploader;
+
