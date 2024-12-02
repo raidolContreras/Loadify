@@ -123,31 +123,34 @@ class FileUploader {
 
     handleFileSelection(newFiles) {
         const fileInfo = this.container.querySelector('#file-info');
-
+    
         if (this.filesToUpload.length + newFiles.length > this.options.maxFiles) {
             toastr.error(this.getTranslation('maxFilesError', { maxFiles: this.options.maxFiles }));
             return;
         }
-
+    
         newFiles.forEach((file) => {
             const fileType = file.name.split('.').pop().toLowerCase();
             if (!this.options.allowedFileTypes.includes(fileType)) {
                 toastr.error(this.getTranslation('fileTypeError', { fileType }));
                 return;
             }
-            if (file.size / 1024 > this.options.maxFileSize) {
+    
+            // Convertir el tamaño máximo a megabytes para la comparación
+            if (file.size / (1024 * 1024) > this.options.maxFileSize) {
                 toastr.error(this.getTranslation('fileSizeError', { fileName: file.name, maxFileSize: this.options.maxFileSize }));
                 return;
             }
+    
             this.filesToUpload.push(file);
         });
-
+    
         this.displayFileInfo(fileInfo);
-
+    
         if (this.options.autoUpload) {
             this.uploadFiles();
         }
-    }
+    }    
 
     displayFileInfo(fileInfo) {
         fileInfo.innerHTML = '';
@@ -188,7 +191,7 @@ class FileUploader {
                 if (detail === 'name') {
                     detailElement.textContent = `Nombre: ${file.name}`;
                 } else if (detail === 'size') {
-                    detailElement.textContent = `Tamaño: ${(file.size / 1024).toFixed(2)} KB`;
+                    detailElement.textContent = `Tamaño: ${this.formatFileSize(file.size)}`;
                 } else if (detail === 'type') {
                     detailElement.textContent = `Tipo: ${file.type}`;
                 }
@@ -208,6 +211,20 @@ class FileUploader {
             fileInfo.appendChild(filePreview);
         });
     }
+    
+    formatFileSize(sizeInBytes) {
+        if (sizeInBytes >= 1024 ** 3) {
+            // Tamaño en GB
+            return `${(sizeInBytes / (1024 ** 3)).toFixed(2)} GB`;
+        } else if (sizeInBytes >= 1024 ** 2) {
+            // Tamaño en MB
+            return `${(sizeInBytes / (1024 ** 2)).toFixed(2)} MB`;
+        } else {
+            // Tamaño en KB
+            return `${(sizeInBytes / 1024).toFixed(2)} KB`;
+        }
+    }
+    
 
     uploadFiles() {
         if (this.filesToUpload.length === 0) {
