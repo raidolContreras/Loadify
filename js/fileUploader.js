@@ -36,13 +36,11 @@ class FileUploader {
                         noFilesSelected: 'No files selected.',
                     },
                 },
-
+                autoProcessQueue: true,
                 fileFieldName: 'file', // Nombre predeterminado del campo de archivo
-                additionalData: {},   // Datos adicionales
-                allowedFileTypes: ['jpg', 'png', 'pdf'],
-                maxFileSize: 2048,
+                allowedFileTypes: [],
+                maxFileSize: 10,
                 maxFiles: 5,
-                autoUpload: false,
                 uploadUrl: 'upload.php',
                 deleteButtonText: '<i class="fas fa-trash"></i> Eliminar',
                 showDetails: ['name', 'size', 'type'],
@@ -69,22 +67,23 @@ class FileUploader {
         this.renderUploader();
         this.addEventListeners();
     }
+    
+    additionalData() {
+
+    }   // Datos adicionales
 
     renderUploader() {
         this.container.innerHTML = `
             <div class="upload-container">
                 <p>
                     <i class="fas fa-cloud-upload-alt"></i> ${this.getTranslation('dragDropText')}
-                    <label for="file-upload" class="text-primary">
+                    <label for="file-upload" class="text-primary upload-link">
                         <i class="fas fa-folder-open"></i> ${this.getTranslation('chooseFile')}
                     </label>
                 </p>
                 <input type="file" id="file-upload" multiple accept="${this.options.allowedFileTypes
                     .map((type) => `.${type}`)
                     .join(',')}">
-                <button id="upload-button" class="btn btn-primary" style="display: none;">
-                    <i class="fas fa-upload"></i> ${this.getTranslation('uploadButton')}
-                </button>
                 <div class="progress mt-3" id="progress-bar" style="display: none;">
                     <div class="progress-bar progress-bar-fill" id="progress-bar-fill" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
@@ -97,7 +96,6 @@ class FileUploader {
         const fileInput = this.container.querySelector('#file-upload');
         const uploadContainer = this.container.querySelector('.upload-container');
         const label = this.container.querySelector('label[for="file-upload"]');
-        const uploadButton = this.container.querySelector('#upload-button');
     
         uploadContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
@@ -113,6 +111,11 @@ class FileUploader {
             uploadContainer.classList.remove('dragover');
             const newFiles = Array.from(event.dataTransfer.files);
             this.handleFileSelection(newFiles);
+            
+
+            if (this.options.autoProcessQueue) {
+                this.uploadFiles();
+            }
         });
     
         // Detener la propagación del clic en el label
@@ -120,17 +123,11 @@ class FileUploader {
             event.stopPropagation();
         });
     
-        // Nuevo evento para hacer clic en todo el contenedor
-        uploadContainer.addEventListener('click', () => {
-            fileInput.click(); // Dispara el evento de clic del input oculto
-        });
     
         fileInput.addEventListener('change', (event) => {
             const newFiles = Array.from(event.target.files);
             this.handleFileSelection(newFiles);
         });
-    
-        uploadButton.addEventListener('click', () => this.uploadFiles());
     }       
 
     handleFileSelection(newFiles) {
@@ -149,9 +146,12 @@ class FileUploader {
             }
             
             const fileType = file.name.split('.').pop().toLowerCase();
-            if (!this.options.allowedFileTypes.includes(fileType)) {
-                toastr.error(this.getTranslation('fileTypeError', { fileType }));
-                return;
+            let allowedFileTypes = this.options.allowedFileTypes;
+            if (!allowedFileTypes.includes(fileType)) {
+                if(allowedFileTypes.length > 0){
+                    toastr.error(this.getTranslation('fileTypeError', { fileType }));
+                    return;
+                }
             }
     
             // Convertir el tamaño máximo a megabytes para la comparación
@@ -164,19 +164,13 @@ class FileUploader {
         });
     
         this.displayFileInfo(fileInfo);
-    
-        if (this.options.autoUpload) {
-            this.uploadFiles();
-        }
     }    
 
     displayFileInfo(fileInfo) {
         fileInfo.innerHTML = '';
         if (this.filesToUpload.length > 0) {
-            this.container.querySelector('#upload-button').style.display = 'block';
             this.container.querySelector('#progress-bar').style.display = 'block';
         } else {
-            this.container.querySelector('#upload-button').style.display = 'none';
             this.container.querySelector('#progress-bar').style.display = 'none';
         }
 
@@ -249,6 +243,10 @@ class FileUploader {
         }
     }
     
+    processQueue() {
+        this.uploadFiles();
+    }
+    
     uploadFiles() {
         if (this.filesToUpload.length === 0) {
             toastr.error(this.getTranslation('noFilesSelected'));
@@ -293,9 +291,9 @@ class FileUploader {
             const fieldName = this.options.fileFieldName || 'file';
             formData.append(fieldName, file);
 
-            for (const key in this.options.additionalData) {
-                if (this.options.additionalData.hasOwnProperty(key)) {
-                    formData.append(key, this.options.additionalData[key]);
+            for (const key in this.additionalData) {
+                if (this.additionalData.hasOwnProperty(key)) {
+                    formData.append(key, this.additionalData[key]);
                 }
             }
             

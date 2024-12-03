@@ -1,23 +1,42 @@
-import FileUploader from './fileUploader.js';
+import FileUploader from '../../vendor/Loadify/js/fileUploader.js';
 
 const uploader = new FileUploader('upload-container', {
-    allowedFileTypes: ['jpg', 'png', 'pdf', 'docx', 'xlsx'],
-    maxFileSize: 4096,
+    allowedFileTypes: ['xlsx', 'xls', 'csv'],
+    maxFileSize: 10,
     maxFiles: 10,
-    autoUpload: false,
-    uploadUrl: 'upload.php',
+    autoProcessQueue: false,
+    uploadUrl: 'controller/ajax.forms.php',
     deleteButtonText: '<i class="fas fa-times"></i>',
-    showDetails: ['name', 'size', 'type'], // Detalles a mostrar
+    showDetails: ['name', 'size'], // Detalles a mostrar
     thumbnails: true, // Activar thumbnails
+    fileFieldName: 'fileStudent',
     iconMap: {
-        pdf: 'fas fa-file-pdf',
-        docx: 'fas fa-file-word',
         xlsx: 'fas fa-file-excel',
-        default: 'fas fa-file-alt',
+        default: 'fas fa-file-excel',
     },
-    language: 'en',
-    onSuccess: (file) => console.log(`¡Archivo subido!: ${file.name}`),
-    onError: (file) => console.error(`Error al subir ${file.name}`),
-    onProgress: (percent, file) => console.log(`Subiendo ${file.name}: ${percent}%`),
-    onDelete: (file) => console.log(`Archivo eliminado: ${file.name}`),
+    language: 'es',
+    translations: {
+        es: {
+            dragDropText: 'Suelta aquí tu archivo Excel o CSV (solo se permite uno), o',
+            chooseFile: 'elige un archivo',
+            uploadButton: 'Subir Archivos',
+            deleteButton: '<i class="fal fa-times"></i>',
+            maxFilesError: 'Solo puedes subir un máximo de {maxFiles} archivos.',
+            fileSizeError: 'El archivo {fileName} excede el tamaño máximo de {maxFileSize} MB.',
+            fileTypeError: 'Tipo de archivo no permitido: {fileType}.',
+            successMessage: '¡Archivo {fileName} subido con éxito!',
+            errorMessage: 'Error al subir el archivo {fileName}.',
+            noFilesSelected: 'No se han seleccionado archivos.',
+        }
+    },
+
+    onSuccess: (file) => {},
+    onError: (file) => {},
+    onProgress: (percent, file) => {},
+    onDelete: (file) => {},
+});
+
+$('#send-files').on('click', function() {
+    uploader.additionalData = { action: 'upload files student', user: 1};
+    uploader.processQueue();
 });
