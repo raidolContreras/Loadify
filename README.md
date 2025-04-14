@@ -106,7 +106,7 @@ Loadify/
 Puedes personalizar los siguientes parámetros en el archivo `main.js` al instanciar el `FileUploader`:
 
 ```javascript
-const uploader = new FileUploader("upload-container", {
+const uploader = new FileUploader("loadify", {
   method: "POST",
   allowedFileTypes: ["jpg", "png", "pdf", "docx", "xlsx"], // Tipos permitidos
   maxFileSize: 4096, // Tamaño máximo del archivo (en KB)
