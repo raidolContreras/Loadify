@@ -7,10 +7,4 @@ const uploader = new FileUploader('upload-container', {
     showDetails: ['name', 'size', 'type'],
     thumbnails: true,
     language: 'es',
-    enableBulkDelete: true,
-});
-
-$('#send-files').on('click', function() {
-    uploader.additionalData = { action: 'upload files student', user: 1};
-    uploader.processQueue();
 });

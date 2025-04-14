@@ -1,14 +1,15 @@
-
 body {
     font-family: 'Roboto', sans-serif;
     margin: 2rem;
     background-color: #f0f2f5;
     color: #333;
 }
+
 p {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
+
 .upload-container {
     border: 1px dashed #007bff;
     padding: 3rem;
@@ -20,13 +21,16 @@ p {
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
 }
+
 .upload-container.dragover {
     background-color: #e6f7ff;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
 }
+
 input[type="file"] {
     display: none;
 }
+
 label {
     cursor: pointer;
     font-weight: bold;
@@ -34,20 +38,25 @@ label {
     text-decoration: none;
     transition: color 0.3s ease;
 }
+
 label:hover {
     color: #0056b3;
 }
+
 .btn-primary {
     margin-top: 1.5rem;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
 .btn-primary:hover {
     background-color: #0056b3;
     transform: scale(1.05);
 }
+
 .progress-bar-container {
     margin-top: 1rem;
 }
+
 .file-info {
     margin-top: 2rem;
     display: flex;
@@ -55,15 +64,17 @@ label:hover {
     gap: 1.5rem;
     justify-content: center;
 }
+
 .delete-file {
     background-color: #dc3545;
     color: #fff;
     border: none;
-    padding: 8px 10px;
+    padding: 7px 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Espaciado entre icono y texto */
+    gap: 8px;
+    /* Espaciado entre icono y texto */
     cursor: pointer;
     border-radius: 25px;
     position: absolute;
@@ -79,18 +90,23 @@ label:hover {
 }
 
 .delete-file:focus {
-    outline: 2px solid #ffc107; /* Indicador de foco */
+    outline: 2px solid #ffc107;
+    /* Indicador de foco */
     outline-offset: 2px;
 }
 
 .delete-file i {
-    margin: 0; /* Asegura que el icono no tenga márgenes adicionales */
-    font-size: 0.5rem; /* Tamaño del icono */
+    margin: 0;
+    /* Asegura que el icono no tenga márgenes adicionales */
+    font-size: 0.5rem;
+    /* Tamaño del icono */
 }
+
 .file-details {
     line-height: 1.5;
     text-align: left;
 }
+
 .admin-settings {
     margin-top: 3rem;
     padding: 2rem;
@@ -100,12 +116,16 @@ label:hover {
     max-width: 600px;
     margin: 2rem auto;
 }
-#upload-button, #progress-bar {
+
+#upload-button,
+#progress-bar {
     display: none;
 }
+
 .progress-bar {
     transition: width 0.4s ease;
 }
+
 .file-preview {
     width: 180px;
     padding: 15px;
@@ -134,7 +154,8 @@ label:hover {
 }
 
 .file-icon {
-    font-size: 48px; /* Aumentar tamaño del icono */
+    font-size: 48px;
+    /* Aumentar tamaño del icono */
     color: #007bff;
     display: flex;
     align-items: center;
@@ -160,6 +181,7 @@ label:hover {
     font-size: 12px;
     color: #6c757d;
 }
+
 .file-preview {
     width: 180px;
     padding: 15px;
@@ -174,7 +196,8 @@ label:hover {
     gap: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     overflow: hidden;
-    max-height: 250px; /* Limita el alto máximo del cuadro */
+    max-height: 250px;
+    /* Limita el alto máximo del cuadro */
 }
 
 .file-preview:hover {
@@ -190,7 +213,8 @@ label:hover {
 }
 
 .file-icon {
-    font-size: 48px; /* Tamaño del icono más grande */
+    font-size: 48px;
+    /* Tamaño del icono más grande */
     color: #007bff;
     display: flex;
     align-items: center;
@@ -221,12 +245,15 @@ label:hover {
     justify-content: flex-start;
     /* max-height: 80px; Limita el alto máximo de los detalles */
     overflow: hidden;
-    width: 100%; /* Asegura que ocupe todo el ancho */
-    text-align: left; /* Alinea el texto a la izquierda */
+    width: 100%;
+    /* Asegura que ocupe todo el ancho */
+    text-align: left;
+    /* Alinea el texto a la izquierda */
 }
 
 .file-details div {
-    word-break: break-word; /* Rompe las palabras largas */
+    word-break: break-word;
+    /* Rompe las palabras largas */
     margin-bottom: 5px;
 }
 
@@ -234,4 +261,40 @@ label:hover {
     transform: scale(1.2);
     z-index: 10;
     cursor: pointer;
+}
+
+.file-status-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 20px;
+    transition: transform 0.3s ease;
+}
+
+.file-preview.uploading {
+    opacity: 0.6;
+    position: relative;
+}
+
+.file-preview.uploading::after {
+    content: '\f021';
+    /* Unicode for Font Awesome's "refresh" icon */
+    font-family: 'Font Awesome 6 Pro';
+    /* Ensure Font Awesome is loaded */
+    font-weight: 900;
+    /* Use the solid style */
+    position: absolute;
+    inset: 0;
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
 }
