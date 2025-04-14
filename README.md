@@ -1,8 +1,25 @@
 # Loadify
 
+**Loadify** es una clase JavaScript moderna y modular que permite cargar, previsualizar y gestionar archivos desde cualquier interfaz web. Basada en JavaScript puro con soporte ESModules, ofrece una experiencia fluida de arrastrar y soltar, validaciones personalizadas, barra de progreso y eliminación masiva o individual.
+
+---
+
+### ✨ Características destacadas
+
+- 🎯 **Arrastrar y soltar** con mensajes dinámicos y animaciones.
+- 🌍 **Multi-idioma:** Español e Inglés listos para usar.
+- 🧩 **Modularidad total:** integra tu lógica personalizada con `FormData`, callbacks y más.
+- 🖼️ **Miniaturas inteligentes:** imágenes, PDFs y otros archivos con íconos representativos.
+- 🛡️ **Validaciones personalizables:** tamaño, tipo, número máximo.
+- 🚀 **Subida automática o manual:** tú decides cuándo enviar los archivos.
+- 🧼 **Eliminación masiva o individual.**
+- 🔧 **Opciones de configuración extensas** para adaptar la lógica a tus necesidades.
+- ✅ **100% compatible con Bootstrap 5, jQuery, Toastr y FontAwesome.**
+
+
 Loadify es una aplicación web moderna y modular para subir y gestionar archivos. Diseñada para ser fácil de usar y altamente personalizable, permite a los usuarios subir múltiples archivos con validaciones avanzadas, previsualización, y opciones de eliminación. Su diseño modular permite reutilizar la lógica de subida en otros proyectos.
 
-## instalación
+## Instalación
 
 ### Instalación con NPM
 
