@@ -13,81 +13,95 @@ class FileUploader {
         // Configuración por defecto combinada con las opciones personalizadas
         this.options = Object.assign(
             {
-                method: 'POST',
-                language: 'es', // Idioma por defecto
+            method: 'POST', // Only POST and GET are allowed
+            language: 'es', // Idioma por defecto
 
-                // Traducciones por idioma
-                translations: {
-                    es: {
-                        dragDropText: 'Arrastra y suelta los archivos aquí, o',
-                        chooseFile: 'elige un archivo',
-                        uploadButton: 'Subir Archivos',
-                        deleteButton: '<i class="fal fa-times"></i>',
-                        maxFilesError: 'Solo puedes subir un máximo de {maxFiles} archivos.',
-                        fileSizeError: 'El archivo {fileName} excede el tamaño máximo de {maxFileSize} KB.',
-                        fileTypeError: 'Tipo de archivo no permitido: {fileType}.',
-                        successMessage: '¡Archivo {fileName} subido con éxito!',
-                        errorMessage: 'Error al subir el archivo {fileName}.',
-                        noFilesSelected: 'No se han seleccionado archivos.',
-                        name: 'Nombre',
-                        size: 'Tamaño',
-                        type: 'Tipo',
-                        fileDeleted: 'archivo eliminado',
-                        filesDeleted: 'archivos eliminados',
-                        deleteFilesSelected: 'Eliminar seleccionados',
-                        dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Suelta tus archivos aquí',
-                        subtitleText: 'Puedes subir archivos de hasta 10 MB y un máximo de 5 archivos.',
-                    },
-                    en: {
-                        dragDropText: 'Drag and drop files here, or',
-                        chooseFile: 'choose a file',
-                        uploadButton: 'Upload Files',
-                        deleteButton: '<i class="fal fa-times"></i>',
-                        maxFilesError: 'You can upload a maximum of {maxFiles} files.',
-                        fileSizeError: 'File {fileName} exceeds the maximum size of {maxFileSize} KB.',
-                        fileTypeError: 'File type not allowed: {fileType}.',
-                        successMessage: 'File {fileName} uploaded successfully!',
-                        errorMessage: 'Error uploading file {fileName}.',
-                        noFilesSelected: 'No files selected.',
-                        name: 'Name',
-                        size: 'Size',
-                        type: 'Type',
-                        fileDeleted: 'file deleted',
-                        filesDeleted: 'files deleted',
-                        deleteFilesSelected: 'Delete selected',
-                        dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Drop your files here',
-                        subtitleText: 'You can upload files up to 10 MB and a maximum of 5 files.',
-                    },
-                },
-
-                autoProcessQueue: true, // Procesar automáticamente tras selección
-                fileFieldName: 'file',
-                allowedFileTypes: [],
-                maxFileSize: 10, // En MB
-                maxFiles: 5,
-                uploadUrl: 'upload.php',
-                deleteButtonText: '<i class="fal fa-times"></i>',
-                showDetails: ['name', 'size', 'type'],
-                thumbnails: true,
-                iconMap: {
-                    pdf: 'fas fa-file-pdf',
-                    docx: 'fas fa-file-word',
-                    xlsx: 'fas fa-file-excel',
-                    default: 'fas fa-file-alt',
-                },
-                enableBulkDelete: true,
-
-                onBulkDelete: () => {},
-                onSuccess: () => {},
-                onError: () => {},
-                onProgress: () => {},
-                onDelete: () => {},
-
-                // Opción para determinar si se crea el botón de enviar archivos de forma automática
-                sendButton: true, // Por default se crea el botón
+            // Validate method in constructor
+            set method(value) {
+                if (value !== 'POST' && value !== 'GET') {
+                throw new Error('Only POST and GET methods are allowed');
+                }
+                this._method = value;
             },
-            options // Sobrescribir opciones por las del usuario
+            get method() {
+                return this._method;
+            },
+
+            // Rest of the options remain the same
+            translations: {
+                es: {
+                dragDropText: 'Arrastra y suelta los archivos aquí, o',
+                chooseFile: 'elige un archivo',
+                uploadButton: 'Subir Archivos',
+                deleteButton: '<i class="fal fa-times"></i>',
+                maxFilesError: 'Solo puedes subir un máximo de {maxFiles} archivos.',
+                fileSizeError: 'El archivo {fileName} excede el tamaño máximo de {maxFileSize} KB.',
+                fileTypeError: 'Tipo de archivo no permitido: {fileType}.',
+                successMessage: '¡Archivo {fileName} subido con éxito!',
+                errorMessage: 'Error al subir el archivo {fileName}.',
+                noFilesSelected: 'No se han seleccionado archivos.',
+                name: 'Nombre',
+                size: 'Tamaño',
+                type: 'Tipo',
+                fileDeleted: 'archivo eliminado',
+                filesDeleted: 'archivos eliminados',
+                deleteFilesSelected: 'Eliminar seleccionados',
+                dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Suelta tus archivos aquí',
+                subtitleText: 'Puedes subir archivos de hasta 10 MB y un máximo de 5 archivos.',
+                },
+                en: {
+                dragDropText: 'Drag and drop files here, or',
+                chooseFile: 'choose a file',
+                uploadButton: 'Upload Files',
+                deleteButton: '<i class="fal fa-times"></i>',
+                maxFilesError: 'You can upload a maximum of {maxFiles} files.',
+                fileSizeError: 'File {fileName} exceeds the maximum size of {maxFileSize} KB.',
+                fileTypeError: 'File type not allowed: {fileType}.',
+                successMessage: 'File {fileName} uploaded successfully!',
+                errorMessage: 'Error uploading file {fileName}.',
+                noFilesSelected: 'No files selected.',
+                name: 'Name',
+                size: 'Size',
+                type: 'Type',
+                fileDeleted: 'file deleted',
+                filesDeleted: 'files deleted',
+                deleteFilesSelected: 'Delete selected',
+                dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Drop your files here',
+                subtitleText: 'You can upload files up to 10 MB and a maximum of 5 files.',
+                },
+            },
+
+            autoProcessQueue: true,
+            fileFieldName: 'file',
+            allowedFileTypes: [],
+            maxFileSize: 10,
+            maxFiles: 5,
+            uploadUrl: 'upload.php',
+            deleteButtonText: '<i class="fal fa-times"></i>',
+            showDetails: ['name', 'size', 'type'],
+            thumbnails: true,
+            iconMap: {
+                pdf: 'fas fa-file-pdf',
+                docx: 'fas fa-file-word',
+                xlsx: 'fas fa-file-excel',
+                default: 'fas fa-file-alt',
+            },
+            enableBulkDelete: true,
+
+            onBulkDelete: () => {},
+            onSuccess: () => {},
+            onError: () => {},
+            onProgress: () => {},
+            onDelete: () => {},
+            sendButton: true,
+            },
+            options
         );
+
+        // Validate method after merging options
+        if (this.options.method !== 'POST' && this.options.method !== 'GET') {
+            throw new Error('Only POST and GET methods are allowed');
+        }
 
         this.filesToUpload = []; // Lista de archivos seleccionados
         this.init(); // Inicialización de la interfaz y eventos
