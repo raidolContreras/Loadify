@@ -10,7 +10,12 @@ p {
     margin-top: 1rem;
 }
 
-.upload-container {
+.subtitle {
+    font-size: 0.7rem;
+    color: #555;
+}
+
+.loadify {
     border: 1px dashed #007bff;
     padding: 3rem;
     text-align: center;
@@ -18,13 +23,44 @@ p {
     position: relative;
     background-color: #ffffff;
     border-radius: 15px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.upload-container.dragover {
+.loadify.dragover {
     background-color: #e6f7ff;
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+    transform: scale(1.02);
+}
+
+.loadify.dragover::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.loadify.dragging {
+    background-color: #d4edda;
+    box-shadow: 0px 12px 25px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+}
+
+.loadify.dragging::before {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745;
+    opacity: 0.9;
+    pointer-events: none;
 }
 
 input[type="file"] {

@@ -33,6 +33,9 @@ class FileUploader {
                         type: 'Tipo',
                         fileDeleted: 'archivo eliminado',
                         filesDeleted: 'archivos eliminados',
+                        deleteFilesSelected: 'Eliminar seleccionados',
+                        dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Suelta tus archivos aquí',
+                        subtitleText: 'Puedes subir archivos de hasta 10 MB y un máximo de 5 archivos.',
                     },
                     en: {
                         dragDropText: 'Drag and drop files here, or',
@@ -50,6 +53,9 @@ class FileUploader {
                         type: 'Type',
                         fileDeleted: 'file deleted',
                         filesDeleted: 'files deleted',
+                        deleteFilesSelected: 'Delete selected',
+                        dragFilesHere: '<i class="fas fa-cloud-upload-alt"></i> Drop your files here',
+                        subtitleText: 'You can upload files up to 10 MB and a maximum of 5 files.',
                     },
                 },
 
@@ -90,7 +96,7 @@ class FileUploader {
     // Método que inicializa el renderizado y listeners
     init() {
         this.renderUploader(this.container.id);
-        this.addEventListeners();
+        this.addEventListeners(this.container.id);
     }
 
     // Método opcional para añadir datos adicionales al FormData
@@ -108,10 +114,11 @@ class FileUploader {
                         <i class="fas fa-folder-open"></i> ${this.getTranslation('chooseFile')}
                     </label>
                 </p>
+                <p class="subtitle">${this.getTranslation('subtitleText')}</p>
                 <input type="file" id="file-upload" multiple accept="${this.options.allowedFileTypes.map((type) => `.${type}`).join(',')}">
                 ${this.options.enableBulkDelete ? `
                     <button class="btn btn-danger mt-3 d-none" id="delete-selected" disabled>
-                        <i class="fas fa-trash-alt"></i> Eliminar seleccionados
+                        <i class="fas fa-trash-alt"></i> ${this.getTranslation('deleteFilesSelected')}
                     </button>
                 ` : ''}
                 
@@ -125,46 +132,56 @@ class FileUploader {
     }
 
     // Añade los listeners para drag & drop, selección de archivos y envío
-    addEventListeners() {
+    addEventListeners(containerId) {
         const fileInput = this.container.querySelector('#file-upload');
-        const uploadContainer = this.container.querySelector('.upload-container');
+        const uploadContainer = this.container.querySelector('.' + containerId);
         const label = this.container.querySelector('label[for="file-upload"]');
-
-        // Dragover - Añade clase visual
+        const originalText = uploadContainer.querySelector('p').innerHTML; // Guarda el contenido original
+    
+        // Dragover - Añade clase visual y cambia el texto
         uploadContainer.addEventListener('dragover', (event) => {
             event.preventDefault();
             uploadContainer.classList.add('dragover');
+            // Actualizar el mensaje mientras se está arrastrando
+            const p = uploadContainer.querySelector('p');
+            p.innerHTML = `${this.getTranslation('dragFilesHere')}`;
         });
-
-        // Dragleave - Elimina clase visual
+    
+        // Dragleave - Restaura el texto original
         uploadContainer.addEventListener('dragleave', () => {
             uploadContainer.classList.remove('dragover');
+            const p = uploadContainer.querySelector('p');
+            p.innerHTML = originalText;
         });
-
-        // Drop - Gestiona archivos soltados
+    
+        // Drop - Procesa la selección y restaura el texto si lo deseas
         uploadContainer.addEventListener('drop', (event) => {
             event.preventDefault();
             uploadContainer.classList.remove('dragover');
+            const p = uploadContainer.querySelector('p');
+            // Puedes restaurar el texto original o dejar otro mensaje
+            p.innerHTML = originalText;
+    
             const newFiles = Array.from(event.dataTransfer.files);
             this.handleFileSelection(newFiles);
-
+    
             if (this.options.autoProcessQueue) {
                 this.uploadFiles();
             }
         });
-
-        // Previene comportamiento predeterminado en el label
+    
+        // Prevent default en el label para evitar comportamientos no deseados
         label.addEventListener('click', (event) => {
             event.stopPropagation();
         });
-
+    
         // Change - Archivos seleccionados manualmente
         fileInput.addEventListener('change', (event) => {
             const newFiles = Array.from(event.target.files);
             this.handleFileSelection(newFiles);
         });
-
-        // Si la opción sendButton está activada, agregamos el evento de envío por defecto
+    
+        // Evento del botón de envío si esta opción está activada
         if (this.options.sendButton) {
             const sendFilesButton = this.container.querySelector('#send-files');
             if (sendFilesButton) {
@@ -173,7 +190,7 @@ class FileUploader {
                 });
             }
         }
-    }
+    }    
 
     // Procesa los archivos seleccionados, validando tipo, tamaño y duplicados
     handleFileSelection(newFiles) {
