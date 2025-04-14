@@ -1,4 +1,4 @@
-import FileUploader from '../../vendor/Loadify/js/fileUploader.js';
+import FileUploader from './fileUploader.js';
 
 const uploader = new FileUploader('upload-container', {
     allowedFileTypes: ['xlsx', 'xls', 'csv'],
