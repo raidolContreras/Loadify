@@ -16,7 +16,6 @@
 - 🔧 **Opciones de configuración extensas** para adaptar la lógica a tus necesidades.
 - ✅ **100% compatible con Bootstrap 5, jQuery, Toastr y FontAwesome.**
 
-
 Loadify es una aplicación web moderna y modular para subir y gestionar archivos. Diseñada para ser fácil de usar y altamente personalizable, permite a los usuarios subir múltiples archivos con validaciones avanzadas, previsualización, y opciones de eliminación. Su diseño modular permite reutilizar la lógica de subida en otros proyectos.
 
 ## Instalación
@@ -108,25 +107,83 @@ Puedes personalizar los siguientes parámetros en el archivo `main.js` al instan
 
 ```javascript
 const uploader = new FileUploader("upload-container", {
+  method: "POST",
   allowedFileTypes: ["jpg", "png", "pdf", "docx", "xlsx"], // Tipos permitidos
   maxFileSize: 4096, // Tamaño máximo del archivo (en KB)
   maxFiles: 10, // Cantidad máxima de archivos
-  autoUpload: false, // Subida automática
+  autoProcessQueue: false, // Subida automática
   uploadUrl: "upload.php", // URL para la subida
   showDetails: ["name", "size", "type"], // Detalles a mostrar
   thumbnails: true, // Previsualización de imágenes
+  fileFieldName: "file",
+  deleteButtonText: '<i class="fal fa-times"></i>',
+  iconMap: {
+    pdf: "fas fa-file-pdf",
+    docx: "fas fa-file-word",
+    xlsx: "fas fa-file-excel",
+    default: "fas fa-file-alt",
+  },
+  enableBulkDelete: true,
+  language: "es", // es: Español, en: Inglés
+  translations: {
+    es: {
+      dragDropText: "Arrastra y suelta los archivos aquí, o",
+      chooseFile: "elige un archivo",
+      uploadButton: "Subir Archivos",
+      deleteButton: '<i class="fal fa-times"></i>',
+      maxFilesError: "Solo puedes subir un máximo de {maxFiles} archivos.",
+      fileSizeError:
+        "El archivo {fileName} excede el tamaño máximo de {maxFileSize} KB.",
+      fileTypeError: "Tipo de archivo no permitido: {fileType}.",
+      successMessage: "¡Archivo {fileName} subido con éxito!",
+      errorMessage: "Error al subir el archivo {fileName}.",
+      noFilesSelected: "No se han seleccionado archivos.",
+      name: "Nombre",
+      size: "Tamaño",
+      type: "Tipo",
+      fileDeleted: "archivo eliminado",
+      filesDeleted: "archivos eliminados",
+      deleteFilesSelected: "Eliminar seleccionados",
+      dragFilesHere:
+        '<i class="fas fa-cloud-upload-alt"></i> Suelta tus archivos aquí',
+      subtitleText:
+        "Puedes subir archivos de hasta 10 MB y un máximo de 5 archivos.",
+    },
+  },
 });
 ```
 
 ### Opciones configurables:
 
-- **allowedFileTypes:** Extensiones permitidas para los archivos.
-- **maxFileSize:** Tamaño máximo de cada archivo (en KB).
-- **maxFiles:** Límite total de archivos.
-- **autoUpload:** Activar/desactivar subida automática al arrastrar.
-- **uploadUrl:** URL donde se procesan los archivos en el servidor.
-- **showDetails:** Detalles visibles de los archivos (nombre, tamaño, tipo).
-- **thumbnails:** Habilita/deshabilita previsualizaciones para imágenes.
+### Opciones de configuración:
+
+- **method** (string): Método HTTP para el envío de archivos. Valores permitidos: "POST" o "GET". Por defecto: "POST".
+
+- **allowedFileTypes** (array): Lista de extensiones de archivo permitidas. Por seguridad, se recomienda validar también en el servidor. Ejemplo: ["jpg", "png", "pdf"].
+
+- **maxFileSize** (number): Tamaño máximo permitido por archivo en KB. 1024KB = 1MB. Por defecto: 4096 (4MB).
+
+- **maxFiles** (number): Número máximo de archivos que se pueden subir simultáneamente. Por defecto: 10.
+
+- **autoProcessQueue** (boolean): Si es true, los archivos se subirán automáticamente al ser agregados. Si es false, esperará al clic en el botón de subida.
+
+- **uploadUrl** (string): Ruta al script del servidor que procesará la subida de archivos. Ejemplo: "upload.php".
+
+- **showDetails** (array): Especifica qué información del archivo mostrar. Valores posibles: ["name", "size", "type"].
+
+- **thumbnails** (boolean): Activa/desactiva la generación de miniaturas para archivos de imagen.
+
+- **fileFieldName** (string): Nombre del campo en el FormData para enviar los archivos. Por defecto: "file".
+
+- **deleteButtonText** (string): HTML o texto para el botón de eliminar archivo. Admite iconos FontAwesome.
+
+- **iconMap** (object): Asigna iconos FontAwesome a diferentes tipos de archivo. Ejemplo: { pdf: "fas fa-file-pdf" }.
+
+- **enableBulkDelete** (boolean): Habilita la opción de eliminar múltiples archivos seleccionados.
+
+- **language** (string): Define el idioma predeterminado. Valores: "es" (Español) o "en" (Inglés).
+
+- **translations** (object): Objeto con todas las cadenas de texto traducibles organizadas por código de idioma.
 
 ---
 

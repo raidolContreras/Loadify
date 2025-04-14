@@ -13,6 +13,7 @@ class FileUploader {
         // Configuración por defecto combinada con las opciones personalizadas
         this.options = Object.assign(
             {
+                method: 'POST',
                 language: 'es', // Idioma por defecto
 
                 // Traducciones por idioma
@@ -66,7 +67,7 @@ class FileUploader {
                 maxFiles: 5,
                 uploadUrl: 'upload.php',
                 deleteButtonText: '<i class="fal fa-times"></i>',
-                showDetails: ['name', 'size', 'type', 'lastModified'],
+                showDetails: ['name', 'size', 'type'],
                 thumbnails: true,
                 iconMap: {
                     pdf: 'fas fa-file-pdf',
@@ -74,10 +75,9 @@ class FileUploader {
                     xlsx: 'fas fa-file-excel',
                     default: 'fas fa-file-alt',
                 },
-                enableBulkDelete: true, // Activar eliminación masiva
-                onBulkDelete: () => {}, // Callback cuando se borren varios
+                enableBulkDelete: true,
 
-                // Callbacks personalizables
+                onBulkDelete: () => {},
                 onSuccess: () => {},
                 onError: () => {},
                 onProgress: () => {},
@@ -394,7 +394,7 @@ class FileUploader {
     
         this.filesToUpload.forEach((file, index) => {
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', this.options.uploadUrl, true);
+            xhr.open(this.options.method, this.options.uploadUrl, true);
     
             // Overlay de "subiendo"
             const currentPreview = filePreviews[index];
