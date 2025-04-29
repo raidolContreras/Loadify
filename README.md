@@ -150,6 +150,9 @@ const uploader = new FileUploader("loadify", {
         "Puedes subir archivos de hasta 10 MB y un máximo de 5 archivos.",
     },
   },
+  additionalData: () => ({
+    // Se puede añadir campos extra
+  })
 });
 ```
 
@@ -184,6 +187,8 @@ const uploader = new FileUploader("loadify", {
 - **language** (string): Define el idioma predeterminado. Valores: "es" (Español) o "en" (Inglés).
 
 - **translations** (object): Objeto con todas las cadenas de texto traducibles organizadas por código de idioma.
+
+- **additionalData** (function): Función que retorna un objeto con datos adicionales a enviar junto con los archivos. Útil para tokens CSRF o metadatos:
 
 ---
 

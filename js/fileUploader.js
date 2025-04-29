@@ -94,6 +94,7 @@ class FileUploader {
           default: "fas fa-file-alt",
         },
         enableBulkDelete: true,
+        additionalData: null,
 
         onBulkDelete: () => {},
         onSuccess: () => {},
@@ -103,6 +104,11 @@ class FileUploader {
       },
       options
     );
+
+    // si el dev pasó función en opciones, la enlazas
+    if (typeof this.options.additionalData === "function") {
+      this.additionalData = this.options.additionalData;
+    }
 
     // Validate method after merging options
     if (this.options.method !== "POST" && this.options.method !== "GET") {
@@ -464,118 +470,127 @@ class FileUploader {
   processQueue() {
     this.uploadFiles();
   }
+
   uploadFiles() {
-	// 1) Validación
-	if (this.filesToUpload.length === 0) {
-	  toastr.error(this.getTranslation("noFilesSelected"));
-	  return;
-	}
-  
-	// 2) Referencias a botones
-	const sendFilesButton = this.container.querySelector("#send-files");
-	const deleteSelectedButton = this.container.querySelector("#delete-selected");
-  
-	// 3) Ocultamos la barra global si existiera
-	const globalBar = this.container.querySelector("#progress-bar");
-	if (globalBar) globalBar.style.display = "none";
-  
-	// 4) Preparamos el botón: deshabilitar + spinner
-	if (sendFilesButton) {
-	  sendFilesButton.disabled = true;
-	  sendFilesButton.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> ${this.getTranslation("uploadButton")}`;
-	  sendFilesButton.classList.remove("d-none");
-	}
-	if (deleteSelectedButton) deleteSelectedButton.disabled = true;
-  
-	// 5) Previews y contador
-	const filePreviews = this.container.querySelectorAll(".file-preview");
-	const total = this.filesToUpload.length;
-	let completed = 0;
-  
-	// 6) Envío individual
-	this.filesToUpload.forEach((file, index) => {
-	  const xhr = new XMLHttpRequest();
-	  xhr.open(this.options.method, this.options.uploadUrl, true);
-  
-	  const currentPreview = filePreviews[index];
-	  currentPreview.classList.add("uploading");
-  
-	  const perFileBar = currentPreview.querySelector(".file-progress .progress-bar");
-  
-	  // Progreso
-	  xhr.upload.addEventListener("progress", (event) => {
-		if (!event.lengthComputable) return;
-		const pct = Math.round((event.loaded / event.total) * 100);
-		perFileBar.style.width = `${pct}%`;
-		perFileBar.setAttribute("aria-valuenow", pct);
-		this.options.onProgress(pct, file);
-	  });
-  
-	  // Al terminar cada uno
-	  xhr.addEventListener("load", () => {
-		currentPreview.classList.remove("uploading");
-  
-		const statusIcon = document.createElement("div");
-		statusIcon.classList.add("file-status-icon");
-  
-		if (xhr.status === 200) {
-		  toastr.success(this.getTranslation("successMessage", { fileName: file.name }));
-		  statusIcon.innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
-		  this.options.onSuccess(file);
-		} else {
-		  toastr.error(this.getTranslation("errorMessage", { fileName: file.name }));
-		  statusIcon.innerHTML = `<i class="fas fa-times-circle text-danger"></i>`;
-		  this.options.onError(file);
-		}
-  
-		// Fijar la barra al 100%
-		perFileBar.style.width = "100%";
-		currentPreview.appendChild(statusIcon);
-  
-		// Contamos uno más completado
-		completed++;
-  
-		// Si todos terminaron...
-		if (completed === total) {
-		  // 7) Limpiar lista y refrescar previews
-		  this.filesToUpload = [];
-		  this.displayFileInfo(this.container.querySelector("#file-info"));
-  
-		  // 8) Resetear botón de envío
-		  if (sendFilesButton) {
-			sendFilesButton.disabled = true;
-			sendFilesButton.innerHTML = this.getTranslation("uploadButton");
-			sendFilesButton.classList.add("d-none");
-		  }
-		  // 9) Resetear botón de borrar seleccionados
-		  if (deleteSelectedButton) {
-			deleteSelectedButton.disabled = true;
-			deleteSelectedButton.classList.add("d-none");
-		  }
-		}
-	  });
-  
-	  // 10) FormData y envío
-	  const formData = new FormData();
-	  const fieldName = this.options.fileFieldName || "file";
-	  formData.append(fieldName, file);
-  
-	  const extraData =
-		typeof this.additionalData === "function"
-		  ? this.additionalData()
-		  : this.additionalData;
-	  if (typeof extraData === "object") {
-		for (const key in extraData) {
-		  if (Object.hasOwn(extraData, key)) {
-			formData.append(key, extraData[key]);
-		  }
-		}
-	  }
-  
-	  xhr.send(formData);
-	});
+    // 1) Validación
+    if (this.filesToUpload.length === 0) {
+      toastr.error(this.getTranslation("noFilesSelected"));
+      return;
+    }
+
+    // 2) Referencias a botones
+    const sendFilesButton = this.container.querySelector("#send-files");
+    const deleteSelectedButton =
+      this.container.querySelector("#delete-selected");
+
+    // 3) Ocultamos la barra global si existiera
+    const globalBar = this.container.querySelector("#progress-bar");
+    if (globalBar) globalBar.style.display = "none";
+
+    // 4) Preparamos el botón: deshabilitar + spinner
+    if (sendFilesButton) {
+      sendFilesButton.disabled = true;
+      sendFilesButton.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> ${this.getTranslation(
+        "uploadButton"
+      )}`;
+      sendFilesButton.classList.remove("d-none");
+    }
+    if (deleteSelectedButton) deleteSelectedButton.disabled = true;
+
+    // 5) Previews y contador
+    const filePreviews = this.container.querySelectorAll(".file-preview");
+    const total = this.filesToUpload.length;
+    let completed = 0;
+
+    // 6) Envío individual
+    this.filesToUpload.forEach((file, index) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open(this.options.method, this.options.uploadUrl, true);
+
+      const currentPreview = filePreviews[index];
+      currentPreview.classList.add("uploading");
+
+      const perFileBar = currentPreview.querySelector(
+        ".file-progress .progress-bar"
+      );
+
+      // Progreso
+      xhr.upload.addEventListener("progress", (event) => {
+        if (!event.lengthComputable) return;
+        const pct = Math.round((event.loaded / event.total) * 100);
+        perFileBar.style.width = `${pct}%`;
+        perFileBar.setAttribute("aria-valuenow", pct);
+        this.options.onProgress(pct, file);
+      });
+
+      // Al terminar cada uno
+      xhr.addEventListener("load", () => {
+        currentPreview.classList.remove("uploading");
+
+        const statusIcon = document.createElement("div");
+        statusIcon.classList.add("file-status-icon");
+
+        if (xhr.status === 200) {
+          toastr.success(
+            this.getTranslation("successMessage", { fileName: file.name })
+          );
+          statusIcon.innerHTML = `<i class="fas fa-check-circle text-success"></i>`;
+          this.options.onSuccess(file);
+        } else {
+          toastr.error(
+            this.getTranslation("errorMessage", { fileName: file.name })
+          );
+          statusIcon.innerHTML = `<i class="fas fa-times-circle text-danger"></i>`;
+          this.options.onError(file);
+        }
+
+        // Fijar la barra al 100%
+        perFileBar.style.width = "100%";
+        currentPreview.appendChild(statusIcon);
+
+        // Contamos uno más completado
+        completed++;
+
+        // Si todos terminaron...
+        if (completed === total) {
+          // 7) Limpiar lista y refrescar previews
+          this.filesToUpload = [];
+          this.displayFileInfo(this.container.querySelector("#file-info"));
+
+          // 8) Resetear botón de envío
+          if (sendFilesButton) {
+            sendFilesButton.disabled = true;
+            sendFilesButton.innerHTML = this.getTranslation("uploadButton");
+            sendFilesButton.classList.add("d-none");
+          }
+          // 9) Resetear botón de borrar seleccionados
+          if (deleteSelectedButton) {
+            deleteSelectedButton.disabled = true;
+            deleteSelectedButton.classList.add("d-none");
+          }
+        }
+      });
+
+      // 10) FormData y envío
+      const formData = new FormData();
+      const fieldName = this.options.fileFieldName || "file";
+      formData.append(fieldName, file);
+
+      const extraData =
+        typeof this.additionalData === "function"
+          ? this.additionalData()
+          : this.additionalData;
+      if (typeof extraData === "object") {
+        for (const key in extraData) {
+          if (Object.hasOwn(extraData, key)) {
+            formData.append(key, extraData[key]);
+          }
+        }
+      }
+
+      xhr.send(formData);
+    });
   }
-  
 
   // Obtiene una traducción con reemplazo de variables
   getTranslation(key, placeholders = {}) {
