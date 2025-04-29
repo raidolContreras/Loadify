@@ -153,8 +153,7 @@ label:hover {
     margin: 2rem auto;
 }
 
-#upload-button,
-#progress-bar {
+#upload-button{
     display: none;
 }
 
@@ -334,3 +333,99 @@ label:hover {
         transform: rotate(360deg);
     }
 }
+
+/* 1) Variables para ajustar fácilmente */
+:root {
+    --exit-duration: 0.6s;
+    --exit-ease: ease-out;
+    --shadow-color: rgba(0,0,0,0.15);
+  }
+  
+  /* 2) Estado de eliminación con máscara + sombras + filtro */
+  .file-preview.removing {
+    position: relative;
+    transform-origin: center center;
+    will-change: transform, opacity, filter, box-shadow;
+    /* combinamos 3 animaciones simultáneas */
+    animation:
+      elegantExit var(--exit-duration) var(--exit-ease) forwards,
+      shrinkMask  var(--exit-duration) var(--exit-ease) forwards,
+      shadowFade  var(--exit-duration) var(--exit-ease) forwards;
+    clip-path: circle(120% at 50% 50%);
+    box-shadow: 0 0 8px var(--shadow-color);
+    filter: hue-rotate(0deg);
+  }
+  
+  /* 3) Keyframes principales (rebote + fade) */
+  @keyframes elegantExit {
+    0% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    30% {
+      opacity: 0.9;
+      transform: scale(1.05) translateY(-8px);
+    }
+    60% {
+      opacity: 0.6;
+      transform: scale(0.95) translateY(-20px);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8) translateY(-30px);
+    }
+  }
+  
+  /* 4) Máscara circular que encoge */
+  @keyframes shrinkMask {
+    to {
+      clip-path: circle(0% at 50% 50%);
+    }
+  }
+  
+  /* 5) La sombra se hace más grande y se desvanece */
+  @keyframes shadowFade {
+    0% {
+      box-shadow: 0 0 8px var(--shadow-color);
+      filter: hue-rotate(0deg);
+    }
+    100% {
+      box-shadow: 0 0 30px rgba(0,0,0,0);
+      filter: hue-rotate(10deg); /* sutil cambio de tono */
+    }
+  }
+  
+  /* 6) Pseudo‐elemento para un pequeño “pulso” radial */
+  .file-preview.removing::after {
+    content: "";
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 20px; height: 20px;
+    background: radial-gradient(circle, rgba(255,255,255,0.8), rgba(255,255,255,0));
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+    animation: pulseRadial var(--exit-duration) var(--exit-ease) forwards;
+  }
+  
+  @keyframes pulseRadial {
+    to {
+      transform: translate(-50%, -50%) scale(4);
+      opacity: 0;
+    }
+  }
+
+  .file-progress {
+    width: 100%;
+    height: 6px;
+    margin-top: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .file-progress .progress-bar {
+    transition: width 0.3s ease;
+    background-color: #0d6efd; /* o tu color principal */
+  }
+  

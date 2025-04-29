@@ -1,5 +1,5 @@
 {
   "name": "loadifybyraidol",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Loadify is a modular and reusable pure JavaScript class that allows you to integrate an advanced file upload interface with drag and drop support, file preview, file type and size validation, multi-language translation (Spanish and English), a progress bar, and individual or bulk file deletion."
 }
